@@ -13,7 +13,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // API tokens aren't used — don't create the personal_access_tokens table
+        \Laravel\Sanctum\Sanctum::ignoreMigrations();
     }
 
     /**
@@ -21,7 +22,24 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Mail / social settings come from the `generals` table. Skip when it doesn't exist yet
+        // (e.g. `php artisan migrate` on a fresh database), otherwise every artisan command fails.
+        if (\Illuminate\Support\Facades\Schema::hasTable('generals')) {
+            $this->applyGeneralSettings();
+        }
+
+        Inertia::share([
+            'flash' => function () {
+                return [
+                    'success' => session('success'),
+                    'error' => session('error'),
+                ];
+            },
+        ]);
+    }
+
+    protected function applyGeneralSettings(): void
+    {
         \Config::set("services.facebook.client_id", general()->fb_app_id);
         \Config::set("services.facebook.client_secret", general()->fb_app_secret);
         \Config::set("services.facebook.redirect", general()->fb_app_secret);
@@ -36,13 +54,5 @@ class AppServiceProvider extends ServiceProvider
         \Config::set("mail.mailers.smtp.encryption", general()->mail_encryption);
         \Config::set("mail.mailers.smtp.username", general()->mail_username);
         \Config::set("mail.mailers.smtp.password", general()->mail_password);
-        Inertia::share([
-            'flash' => function () {
-                return [
-                    'success' => session('success'),
-                    'error' => session('error'),
-                ];
-            },
-        ]);
     }
 }

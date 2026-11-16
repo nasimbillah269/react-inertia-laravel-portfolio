@@ -15,11 +15,22 @@ use Carbon\Carbon;
 
 
 function general(){
+  // one query per request; create the settings row on a fresh install
+  static $cached = null;
+  if ($cached) {
+    return $cached;
+  }
   $general =General::first();
+  if (!$general) {
+    $general = new General();
+    $general->title = 'Portfolio';
+    $general->save();
+    $general = General::first();
+  }
   $general->logo_url = asset($general->logo());
   $general->banner_url = asset($general->banner());
   $general->web_title = $general->websiteTitle();
-  return $general;
+  return $cached = $general;
 }
 
 function websiteTitle($title=null){

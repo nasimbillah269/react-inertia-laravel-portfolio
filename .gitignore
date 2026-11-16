@@ -16,3 +16,5 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+# database dumps (contain credentials / user data) — never commit
+*.sql
