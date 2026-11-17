@@ -5,6 +5,7 @@ import SocialLinks from "@/Portfolio/SocialLinks";
 import MatrixRain from "@/Portfolio/MatrixRain";
 import useScrollReveal from "@/Portfolio/useScrollReveal";
 import WhatsAppButton from "@/Portfolio/WhatsAppButton";
+import AsciiGlitchText from "@/Portfolio/AsciiGlitchText";
 
 const NAV = [
     ["Home", "home"],
@@ -211,6 +212,19 @@ export default function PortfolioLayout({ children, meta, isHome = false }) {
                 </div>
                 <div className="pf-container pf-footer-bottom">
                     <span>{settings.copyright || `© ${new Date().getFullYear()} All rights reserved.`}</span>
+                    {settings.hero_name && (
+                        <span className="pf-footer-name" aria-label={settings.hero_name}>
+                            <AsciiGlitchText
+                                parts={[
+                                    { text: `${settings.hero_name.split(" ")[0]} `, color: "#ffffff" },
+                                    {
+                                        text: settings.hero_name.split(" ").slice(1).join(" "),
+                                        gradient: ["#b05cf8", "#6271ff"],
+                                    },
+                                ]}
+                            />
+                        </span>
+                    )}
                     <span>
                         Designed with <span style={{ color: "#f43f5e" }}>♥</span> for Developers
                     </span>
